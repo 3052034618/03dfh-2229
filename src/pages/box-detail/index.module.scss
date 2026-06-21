@@ -1,0 +1,212 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 160rpx;
+}
+
+.section {
+  padding: 0 $page-padding;
+  margin-top: $spacing-lg;
+}
+
+.infoCard {
+  background-color: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.boxHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1rpx solid $color-divider;
+}
+
+.boxNo {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: 8rpx;
+}
+
+.boxSpecs {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.infoGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md 0;
+}
+
+.infoItem {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.infoLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.infoValue {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+}
+
+.infoValueHighlight {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+}
+
+.tempValue {
+  color: $color-cold;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+}
+
+.depositPaid {
+  color: $color-success;
+}
+
+.depositUnpaid {
+  color: $color-warning;
+}
+
+.warningText {
+  color: $color-warning;
+}
+
+.errorText {
+  color: $color-error;
+}
+
+.timelineSection {
+  margin-top: $spacing-lg;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 32rpx;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8rpx;
+  top: 8rpx;
+  bottom: 8rpx;
+  width: 2rpx;
+  background-color: $color-border;
+}
+
+.timelineItem {
+  position: relative;
+  padding-bottom: $spacing-lg;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.timelineDot {
+  position: absolute;
+  left: -28rpx;
+  top: 6rpx;
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: $radius-round;
+  background-color: $color-primary;
+  border: 4rpx solid $color-bg-card;
+}
+
+.timelineDotFirst {
+  background-color: $color-primary;
+}
+
+.timelineContent {
+  background-color: $color-bg-gray;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+}
+
+.timelineTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  margin-bottom: 6rpx;
+}
+
+.timelineTime {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: 6rpx;
+}
+
+.timelineDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.5;
+}
+
+.actionBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc(#{$spacing-md} + env(safe-area-inset-bottom));
+  background-color: $color-bg-card;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+  gap: $spacing-md;
+}
+
+.secondaryBtn {
+  flex: 1;
+  height: $button-height-lg;
+  background-color: $color-bg-gray;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-primary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.primaryBtn {
+  flex: 1;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+
+  &:active {
+    opacity: 0.9;
+  }
+}

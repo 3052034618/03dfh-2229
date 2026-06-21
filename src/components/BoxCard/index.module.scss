@@ -1,0 +1,135 @@
+@use '@/styles/variables.scss' as *;
+
+.card {
+  background-color: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.99);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+}
+
+.boxNoRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.boxNo {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.specs {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.cardBody {
+  margin-bottom: $spacing-md;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  background-color: $color-bg-gray;
+  border-radius: $radius-md;
+  padding: $spacing-md 0;
+}
+
+.infoItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.infoLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.infoValue {
+  display: flex;
+  align-items: baseline;
+}
+
+.daysNum {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.daysUnit {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-left: 4rpx;
+}
+
+.depositText {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+}
+
+.tempText {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-cold;
+}
+
+.infoDivider {
+  width: 1px;
+  height: 48rpx;
+  background-color: $color-border;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  padding-top: $spacing-md;
+  border-top: 1rpx solid $color-divider;
+}
+
+.cardFooterSimple {
+  display: flex;
+  align-items: center;
+  padding-top: $spacing-md;
+  border-top: 1rpx solid $color-divider;
+}
+
+.suggestLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.suggestValue {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-left: $spacing-xs;
+}
+
+.suggestTime {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  flex: 1;
+  margin-left: $spacing-xs;
+}
+
+.arrow {
+  font-size: $font-size-lg;
+  color: $color-text-tertiary;
+}

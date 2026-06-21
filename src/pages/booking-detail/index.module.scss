@@ -1,0 +1,268 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 40rpx;
+}
+
+.section {
+  padding: 0 $page-padding;
+  margin-top: $spacing-lg;
+}
+
+.statusCard {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  color: $color-text-white;
+}
+
+.statusTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+}
+
+.statusText {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+}
+
+.statusDesc {
+  font-size: $font-size-sm;
+  opacity: 0.8;
+  margin-top: 8rpx;
+}
+
+.statusIcon {
+  font-size: 64rpx;
+}
+
+.infoCard {
+  background-color: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: $spacing-md 0;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.infoLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  flex-shrink: 0;
+}
+
+.infoValue {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  text-align: right;
+  flex: 1;
+  margin-left: $spacing-md;
+  word-break: break-all;
+}
+
+.infoValueHighlight {
+  font-weight: $font-weight-semibold;
+}
+
+.carrierCard {
+  background-color: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.carrierTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.carrierInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.carrierAvatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: $radius-round;
+  background-color: rgba($color-primary, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+}
+
+.carrierDetail {
+  flex: 1;
+}
+
+.carrierName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: 6rpx;
+}
+
+.carrierPhone {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.callBtn {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: $radius-round;
+  background-color: rgba($color-success, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.timelineSection {
+  margin-top: $spacing-lg;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 32rpx;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8rpx;
+  top: 8rpx;
+  bottom: 8rpx;
+  width: 2rpx;
+  background-color: $color-border;
+}
+
+.timelineItem {
+  position: relative;
+  padding-bottom: $spacing-lg;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.timelineDot {
+  position: absolute;
+  left: -28rpx;
+  top: 6rpx;
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: $radius-round;
+  background-color: $color-border;
+  border: 4rpx solid $color-bg-card;
+}
+
+.timelineDotActive {
+  background-color: $color-primary;
+  box-shadow: 0 0 0 4rpx rgba($color-primary, 0.2);
+}
+
+.timelineContent {
+  padding-bottom: $spacing-sm;
+}
+
+.timelineTitle {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  margin-bottom: 6rpx;
+}
+
+.timelineTitleActive {
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+}
+
+.timelineTime {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.boxList {
+  margin-top: $spacing-md;
+}
+
+.boxTag {
+  display: inline-block;
+  padding: 8rpx 20rpx;
+  background-color: $color-bg-gray;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-right: $spacing-sm;
+  margin-bottom: $spacing-sm;
+}
+
+.actionBar {
+  margin: $spacing-xl $page-padding 0;
+  display: flex;
+  gap: $spacing-md;
+}
+
+.secondaryBtn {
+  flex: 1;
+  height: $button-height-lg;
+  background-color: $color-bg-card;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-primary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  box-shadow: $shadow-card;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.primaryBtn {
+  flex: 1;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+
+  &:active {
+    opacity: 0.9;
+  }
+}

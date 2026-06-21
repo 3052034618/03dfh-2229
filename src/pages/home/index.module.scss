@@ -1,0 +1,172 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 40rpx;
+}
+
+.header {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: 32rpx 32rpx 48rpx;
+  border-radius: 0 0 24rpx 24rpx;
+  color: $color-text-white;
+}
+
+.storeName {
+  font-size: 36rpx;
+  font-weight: $font-weight-semibold;
+  margin-bottom: 8rpx;
+}
+
+.storeCode {
+  font-size: $font-size-sm;
+  opacity: 0.8;
+  margin-bottom: $spacing-md;
+}
+
+.depositRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.depositItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.depositLabel {
+  font-size: $font-size-xs;
+  opacity: 0.8;
+}
+
+.depositValue {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+}
+
+.section {
+  padding: 0 $page-padding;
+  margin-top: -24rpx;
+}
+
+.statCards {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+}
+
+.statCard {
+  flex: 1;
+  background-color: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-md $spacing-sm;
+  text-align: center;
+  box-shadow: $shadow-card;
+  border: 2rpx solid transparent;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.statCardActive {
+  border-color: $color-primary;
+  background-color: rgba($color-primary, 0.04);
+}
+
+.statNumber {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  line-height: 1.2;
+}
+
+.statNumberWarning {
+  color: $color-warning;
+}
+
+.statNumberError {
+  color: $color-error;
+}
+
+.statNumberInfo {
+  color: $color-primary;
+}
+
+.statLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 6rpx;
+}
+
+.quickActions {
+  background-color: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  justify-content: space-around;
+}
+
+.actionItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.actionIcon {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: $radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  background-color: rgba($color-primary, 0.08);
+}
+
+.actionIconOrange {
+  background-color: rgba($color-warning, 0.1);
+}
+
+.actionIconGreen {
+  background-color: rgba($color-success, 0.1);
+}
+
+.actionText {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+}
+
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+  padding: 0 $spacing-xs;
+}
+
+.listTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.listCount {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.boxList {
+  min-height: 400rpx;
+}
