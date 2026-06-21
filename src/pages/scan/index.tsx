@@ -4,7 +4,7 @@ import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 import { useApp } from '@/store/app';
-import type { BoxItem } from '@/types';
+import type { BoxItem, ArrivalCheckItem, ArrivalCheckRecord } from '@/types';
 
 interface CheckItem {
   key: string;
@@ -13,7 +13,7 @@ interface CheckItem {
 }
 
 const ScanPage: React.FC = () => {
-  const { boxList, updateBoxStatus, addBox } = useApp();
+  const { boxList, updateBoxStatus, updateBox, addBox } = useApp();
   const [boxNoInput, setBoxNoInput] = useState('');
   const [currentBox, setCurrentBox] = useState<BoxItem | null>(null);
   const [checkItems, setCheckItems] = useState<CheckItem[]>([
@@ -113,7 +113,24 @@ const ScanPage: React.FC = () => {
         const newStatus: BoxItem['status'] = checkItems.some(item => item.value === 'abnormal')
           ? 'abnormal'
           : 'in_use';
-        updateBoxStatus(currentBox.id, newStatus);
+        
+        const checkRecord: ArrivalCheckRecord = {
+          checkTime: new Date().toISOString(),
+          items: checkItems.map(item => ({
+            key: item.key,
+            label: item.label,
+            value: item.value as 'normal' | 'abnormal',
+            abnormalDesc: item.value === 'abnormal' ? abnormalDesc : undefined
+          })) as ArrivalCheckItem[],
+          abnormalDesc: hasAbnormal() ? abnormalDesc : undefined
+        };
+
+        updateBox(currentBox.id, {
+          status: newStatus,
+          borrowTime: new Date().toISOString(),
+          arrivalCheck: checkRecord
+        });
+        
         console.log('[Scan] box status updated to:', newStatus);
       }
       setShowSuccess(true);

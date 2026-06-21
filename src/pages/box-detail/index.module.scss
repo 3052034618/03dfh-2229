@@ -164,6 +164,69 @@
   line-height: 1.5;
 }
 
+.checkInfoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: $spacing-md;
+  margin-bottom: $spacing-md;
+  border-bottom: 1rpx solid $color-divider;
+}
+
+.checkLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.checkValue {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.checkItemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+}
+
+.checkItemLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.checkItemValue {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.checkNormal {
+  color: $color-success;
+}
+
+.checkAbnormal {
+  color: $color-error;
+}
+
+.checkDescRow {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1rpx dashed $color-border;
+}
+
+.checkDescLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: $spacing-xs;
+  display: block;
+}
+
+.checkDescText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
 .actionBar {
   position: fixed;
   bottom: 0;

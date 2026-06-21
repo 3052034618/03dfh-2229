@@ -97,6 +97,10 @@
   color: $color-primary;
 }
 
+.statNumberPrimary {
+  color: $color-cold;
+}
+
 .statLabel {
   font-size: $font-size-xs;
   color: $color-text-tertiary;
@@ -165,6 +169,43 @@
 .listCount {
   font-size: $font-size-sm;
   color: $color-text-tertiary;
+}
+
+.filterSection {
+  margin-bottom: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.filterScroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.filterRow {
+  display: inline-flex;
+  gap: $spacing-sm;
+  padding: 0 $spacing-xs;
+}
+
+.filterChip {
+  padding: $spacing-xs $spacing-md;
+  background-color: $color-bg-gray;
+  border-radius: $radius-round;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  white-space: nowrap;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.filterChipActive {
+  background-color: rgba($color-primary, 0.1);
+  color: $color-primary;
+  font-weight: $font-weight-medium;
 }
 
 .boxList {

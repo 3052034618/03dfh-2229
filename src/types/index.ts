@@ -13,6 +13,20 @@ export type BoxStatus = 'to_return' | 'arrived_today' | 'abnormal' | 'in_use' | 
 
 export type DepositStatus = 'paid' | 'unpaid' | 'refunded';
 
+export interface ArrivalCheckItem {
+  label: string;
+  key: string;
+  value: 'normal' | 'abnormal' | '';
+  abnormalDesc?: string;
+}
+
+export interface ArrivalCheckRecord {
+  checkTime: string;
+  items: ArrivalCheckItem[];
+  abnormalDesc?: string;
+  operator?: string;
+}
+
 export interface BoxItem {
   id: string;
   boxNo: string;
@@ -25,13 +39,7 @@ export interface BoxItem {
   borrowTime: string;
   latestLocation?: string;
   specs?: string;
-}
-
-export interface ArrivalCheckItem {
-  label: string;
-  key: string;
-  value: 'normal' | 'abnormal' | '';
-  abnormalDesc?: string;
+  arrivalCheck?: ArrivalCheckRecord;
 }
 
 export interface BookingRecord {

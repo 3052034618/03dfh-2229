@@ -6,14 +6,18 @@ import styles from './index.module.scss';
 import BoxCard from '@/components/BoxCard';
 import { useUser } from '@/store/user';
 import { useApp } from '@/store/app';
-import type { BoxStatus } from '@/types';
+import type { BoxStatus, DepositStatus } from '@/types';
 
-type TabType = 'all' | 'to_return' | 'arrived_today' | 'abnormal';
+type TabType = 'to_return' | 'in_use' | 'arrived_today' | 'abnormal';
+type DaysFilter = 'all' | '1-3' | '4-7' | '7+';
+type DepositFilter = 'all' | DepositStatus;
 
 const HomePage: React.FC = () => {
   const { user } = useUser();
   const { boxList } = useApp();
-  const [activeTab, setActiveTab] = useState<TabType>('to_return');
+  const [activeTab, setActiveTab] = useState<TabType>('in_use');
+  const [daysFilter, setDaysFilter] = useState<DaysFilter>('all');
+  const [depositFilter, setDepositFilter] = useState<DepositFilter>('all');
 
   useDidShow(() => {
     console.log('[Home] page did show, box count:', boxList.length);
@@ -22,18 +26,38 @@ const HomePage: React.FC = () => {
   const stats = useMemo(() => {
     return {
       to_return: boxList.filter(b => b.status === 'to_return').length,
+      in_use: boxList.filter(b => b.status === 'in_use').length,
       arrived_today: boxList.filter(b => b.status === 'arrived_today').length,
       abnormal: boxList.filter(b => b.status === 'abnormal').length
     };
   }, [boxList]);
 
   const filteredList = useMemo(() => {
-    if (activeTab === 'all') return boxList;
-    return boxList.filter(b => b.status === activeTab);
-  }, [boxList, activeTab]);
+    let list = boxList.filter(b => b.status === activeTab);
+    
+    if (daysFilter !== 'all') {
+      if (daysFilter === '1-3') {
+        list = list.filter(b => b.borrowDays >= 1 && b.borrowDays <= 3);
+      } else if (daysFilter === '4-7') {
+        list = list.filter(b => b.borrowDays >= 4 && b.borrowDays <= 7);
+      } else if (daysFilter === '7+') {
+        list = list.filter(b => b.borrowDays > 7);
+      }
+    }
+    
+    if (depositFilter !== 'all') {
+      list = list.filter(b => b.depositStatus === depositFilter);
+    }
+    
+    return list;
+  }, [boxList, activeTab, daysFilter, depositFilter]);
+
+  const showFilters = activeTab === 'in_use' || activeTab === 'to_return';
 
   const handleTabClick = (tab: TabType) => {
     setActiveTab(tab);
+    setDaysFilter('all');
+    setDepositFilter('all');
   };
 
   const handleScan = () => {
@@ -56,13 +80,26 @@ const HomePage: React.FC = () => {
 
   const getTabTitle = (tab: TabType): string => {
     const map: Record<TabType, string> = {
-      all: '全部',
       to_return: '待归还',
+      in_use: '使用中',
       arrived_today: '今日到货',
-      abnormal: '异常'
+      abnormal: '异常待确认'
     };
     return map[tab];
   };
+
+  const daysOptions: { key: DaysFilter; label: string }[] = [
+    { key: 'all', label: '全部天数' },
+    { key: '1-3', label: '1-3天' },
+    { key: '4-7', label: '4-7天' },
+    { key: '7+', label: '7天以上' }
+  ];
+
+  const depositOptions: { key: DepositFilter; label: string }[] = [
+    { key: 'all', label: '全部押金' },
+    { key: 'paid', label: '已交押金' },
+    { key: 'unpaid', label: '未交押金' }
+  ];
 
   return (
     <ScrollView
@@ -88,6 +125,15 @@ const HomePage: React.FC = () => {
 
       <View className={styles.section}>
         <View className={styles.statCards}>
+          <View
+            className={classnames(styles.statCard, activeTab === 'in_use' && styles.statCardActive)}
+            onClick={() => handleTabClick('in_use')}
+          >
+            <Text className={classnames(styles.statNumber, styles.statNumberPrimary)}>
+              {stats.in_use}
+            </Text>
+            <Text className={styles.statLabel}>使用中</Text>
+          </View>
           <View
             className={classnames(styles.statCard, activeTab === 'to_return' && styles.statCardActive)}
             onClick={() => handleTabClick('to_return')}
@@ -136,6 +182,43 @@ const HomePage: React.FC = () => {
           <Text className={styles.listTitle}>{getTabTitle(activeTab)}清单</Text>
           <Text className={styles.listCount}>共 {filteredList.length} 个</Text>
         </View>
+
+        {showFilters && (
+          <View className={styles.filterSection}>
+            <ScrollView className={styles.filterScroll} scrollX showScrollbar={false}>
+              <View className={styles.filterRow}>
+                {daysOptions.map(option => (
+                  <View
+                    key={option.key}
+                    className={classnames(
+                      styles.filterChip,
+                      daysFilter === option.key && styles.filterChipActive
+                    )}
+                    onClick={() => setDaysFilter(option.key)}
+                  >
+                    <Text>{option.label}</Text>
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
+            <ScrollView className={styles.filterScroll} scrollX showScrollbar={false}>
+              <View className={styles.filterRow}>
+                {depositOptions.map(option => (
+                  <View
+                    key={option.key}
+                    className={classnames(
+                      styles.filterChip,
+                      depositFilter === option.key && styles.filterChipActive
+                    )}
+                    onClick={() => setDepositFilter(option.key)}
+                  >
+                    <Text>{option.label}</Text>
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+        )}
 
         <View className={styles.boxList}>
           {filteredList.map(box => (

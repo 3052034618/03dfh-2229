@@ -4,7 +4,7 @@ import Taro, { useRouter } from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 import StatusTag from '@/components/StatusTag';
-import { mockBoxList } from '@/data/mock';
+import { useApp } from '@/store/app';
 import { formatDateTime, getStatusText, getDepositText } from '@/utils';
 import type { BoxItem } from '@/types';
 
@@ -16,18 +16,28 @@ interface TimelineRecord {
 
 const BoxDetailPage: React.FC = () => {
   const router = useRouter();
+  const { getBoxById, getBoxByNo } = useApp();
   const [box, setBox] = useState<BoxItem | null>(null);
 
   useEffect(() => {
     const id = router.params.id;
-    console.log('[BoxDetail] box id:', id);
-    const found = mockBoxList.find(b => b.id === id);
+    const boxNo = router.params.boxNo;
+    console.log('[BoxDetail] params:', { id, boxNo });
+    
+    let found: BoxItem | undefined;
+    if (id) {
+      found = getBoxById(id);
+    }
+    if (!found && boxNo) {
+      found = getBoxByNo(boxNo);
+    }
+    
     if (found) {
       setBox(found);
     } else {
-      setBox(mockBoxList[0]);
+      console.warn('[BoxDetail] box not found');
     }
-  }, [router.params.id]);
+  }, [router.params.id, router.params.boxNo, getBoxById, getBoxByNo]);
 
   const timeline: TimelineRecord[] = box ? [
     {
@@ -131,6 +141,42 @@ const BoxDetailPage: React.FC = () => {
           </View>
         </View>
       </View>
+
+      {box?.arrivalCheck && (
+        <View className={styles.section}>
+          <Text className={styles.sectionTitle}>到货检查记录</Text>
+          <View className={styles.infoCard}>
+            <View className={styles.checkInfoRow}>
+              <Text className={styles.checkLabel}>检查时间</Text>
+              <Text className={styles.checkValue}>
+                {formatDateTime(box.arrivalCheck.checkTime)}
+              </Text>
+            </View>
+            {box.arrivalCheck.items.map((item, index) => (
+              <View key={index} className={styles.checkItemRow}>
+                <Text className={styles.checkItemLabel}>{item.label}</Text>
+                <Text
+                  className={classnames(
+                    styles.checkItemValue,
+                    item.value === 'normal' && styles.checkNormal,
+                    item.value === 'abnormal' && styles.checkAbnormal
+                  )}
+                >
+                  {item.value === 'normal' ? '正常' : '异常'}
+                </Text>
+              </View>
+            ))}
+            {box.arrivalCheck.abnormalDesc && (
+              <View className={styles.checkDescRow}>
+                <Text className={styles.checkDescLabel}>异常说明</Text>
+                <Text className={styles.checkDescText}>
+                  {box.arrivalCheck.abnormalDesc}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+      )}
 
       <View className={styles.section}>
         <Text className={styles.sectionTitle}>流转记录</Text>
