@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Input, Textarea, Image } from '@tarojs/components';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, Input, Textarea, Image, ScrollView } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
@@ -23,12 +23,16 @@ const DisputePage: React.FC = () => {
   const [images, setImages] = useState<string[]>([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [highlightId, setHighlightId] = useState('');
 
   useEffect(() => {
     if (router.params.boxNo) {
       setBoxNo(router.params.boxNo);
     }
-  }, [router.params.boxNo]);
+    if (router.params.highlightDisputeId) {
+      setHighlightId(router.params.highlightDisputeId);
+    }
+  }, [router.params.boxNo, router.params.highlightDisputeId]);
 
   const canSubmit = () => {
     return boxNo.trim() && description.trim().length >= 10;
@@ -174,8 +178,16 @@ const DisputePage: React.FC = () => {
 
       <View className={styles.section}>
         <Text className={styles.recordsTitle}>历史记录</Text>
-        {disputeList.map(record => (
-          <View key={record.id} className={styles.recordCard}>
+        <ScrollView scrollY scrollIntoView={highlightId ? `dispute_${highlightId}` : undefined}>
+          {disputeList.map(record => (
+            <View
+              key={record.id}
+              id={`dispute_${record.id}`}
+              className={classnames(
+                styles.recordCard,
+                highlightId === record.id && styles.recordCardHighlight
+              )}
+            >
             <View className={styles.recordHeader}>
               <Text className={styles.recordBoxNo}>{record.boxNo}</Text>
               <StatusTag
@@ -206,6 +218,7 @@ const DisputePage: React.FC = () => {
             </View>
           </View>
         ))}
+        </ScrollView>
       </View>
 
       <View className={styles.submitBar}>

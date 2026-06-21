@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text } from '@tarojs/components';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { View, Text, ScrollView } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
@@ -12,11 +12,14 @@ const BoxDetailPage: React.FC = () => {
   const router = useRouter();
   const { getBoxById, getBoxByNo, getTimelineForBox } = useApp();
   const [box, setBox] = useState<BoxItem | null>(null);
+  const [highlightEventId, setHighlightEventId] = useState<string>('');
+  const scrollRef = useRef<any>(null);
 
   useEffect(() => {
     const id = router.params.id;
     const boxNo = router.params.boxNo;
-    console.log('[BoxDetail] params:', { id, boxNo });
+    const highlightId = router.params.highlightEventId;
+    console.log('[BoxDetail] params:', { id, boxNo, highlightId });
     
     let found: BoxItem | undefined;
     if (id) {
@@ -31,7 +34,11 @@ const BoxDetailPage: React.FC = () => {
     } else {
       console.warn('[BoxDetail] box not found');
     }
-  }, [router.params.id, router.params.boxNo, getBoxById, getBoxByNo]);
+
+    if (highlightId) {
+      setHighlightEventId(highlightId);
+    }
+  }, [router.params.id, router.params.boxNo, router.params.highlightEventId, getBoxById, getBoxByNo]);
 
   const timeline = useMemo((): TimelineEvent[] => {
     if (!box) return [];
@@ -43,7 +50,8 @@ const BoxDetailPage: React.FC = () => {
       'arrival_check': '✅',
       'booking': '🚚',
       'dispute': '💬',
-      'status_change': '📦'
+      'status_change': '📦',
+      'deposit': '💰'
     };
     return map[type] || '📋';
   };
@@ -52,7 +60,7 @@ const BoxDetailPage: React.FC = () => {
     if (event.relatedType === 'booking' && event.relatedId) {
       Taro.navigateTo({ url: `/pages/booking-detail/index?id=${event.relatedId}` });
     } else if (event.relatedType === 'dispute' && event.relatedId) {
-      Taro.navigateTo({ url: `/pages/dispute/index?disputeId=${event.relatedId}` });
+      Taro.navigateTo({ url: `/pages/dispute/index?highlightDisputeId=${event.relatedId}` });
     }
   };
 
@@ -75,7 +83,7 @@ const BoxDetailPage: React.FC = () => {
   const isOverdue = box.borrowDays > 5;
 
   return (
-    <View className={styles.page}>
+    <ScrollView className={styles.page} scrollY scrollIntoView={highlightEventId || undefined}>
       <View className={styles.section}>
         <View className={styles.infoCard}>
           <View className={styles.boxHeader}>
@@ -184,9 +192,11 @@ const BoxDetailPage: React.FC = () => {
             {timeline.map((event, index) => (
               <View
                 key={event.id}
+                id={`event_${event.id}`}
                 className={classnames(
                   styles.timelineItem,
-                  event.relatedType && styles.timelineItemClickable
+                  event.relatedType && styles.timelineItemClickable,
+                  highlightEventId === event.id && styles.timelineItemHighlight
                 )}
                 onClick={() => handleTimelineClick(event)}
               >
@@ -214,6 +224,16 @@ const BoxDetailPage: React.FC = () => {
                   {event.relatedType && (
                     <Text className={styles.timelineAction}>点击查看详情 ›</Text>
                   )}
+                  {event.type === 'status_change' && event.previousStatus && (
+                    <Text className={styles.timelineStatusChange}>
+                      {getStatusText(event.previousStatus)} → {getStatusText(event.status)}
+                    </Text>
+                  )}
+                  {event.type === 'deposit' && (
+                    <Text className={styles.timelineDeposit}>
+                      {event.status === 'paid' ? '已交' : event.status === 'refunded' ? '已退' : event.status === 'frozen' ? '已冻结' : '已解冻'}
+                    </Text>
+                  )}
                 </View>
               </View>
             ))}
@@ -229,7 +249,7 @@ const BoxDetailPage: React.FC = () => {
           <Text>预约回收</Text>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

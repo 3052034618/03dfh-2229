@@ -284,3 +284,21 @@
     opacity: 0.9;
   }
 }
+
+.outlineBtn {
+  flex: 1;
+  height: $button-height-lg;
+  background-color: transparent;
+  border: 2rpx solid $color-primary;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-primary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+
+  &:active {
+    opacity: 0.8;
+  }
+}

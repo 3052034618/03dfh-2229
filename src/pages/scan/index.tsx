@@ -13,7 +13,7 @@ interface CheckItem {
 }
 
 const ScanPage: React.FC = () => {
-  const { boxList, updateBoxStatus, updateBox, addBox } = useApp();
+  const { boxList, updateBox, addBox, setArrivalCheck } = useApp();
   const [boxNoInput, setBoxNoInput] = useState('');
   const [currentBox, setCurrentBox] = useState<BoxItem | null>(null);
   const [checkItems, setCheckItems] = useState<CheckItem[]>([
@@ -125,11 +125,7 @@ const ScanPage: React.FC = () => {
           abnormalDesc: hasAbnormal() ? abnormalDesc : undefined
         };
 
-        updateBox(currentBox.id, {
-          status: newStatus,
-          borrowTime: new Date().toISOString(),
-          arrivalCheck: checkRecord
-        });
+        setArrivalCheck(currentBox.id, checkRecord, newStatus);
         
         console.log('[Scan] box status updated to:', newStatus);
       }

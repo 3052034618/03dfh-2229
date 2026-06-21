@@ -16,7 +16,7 @@ interface TimelineStep {
 
 const BookingDetailPage: React.FC = () => {
   const router = useRouter();
-  const { getBookingById, bookingList } = useApp();
+  const { getBookingById, bookingList, cancelBooking, completeBooking } = useApp();
   const [booking, setBooking] = useState<BookingRecord | null>(null);
 
   useEffect(() => {
@@ -88,12 +88,31 @@ const BookingDetailPage: React.FC = () => {
   };
 
   const handleCancel = () => {
+    if (!booking) return;
     Taro.showModal({
       title: '取消预约',
-      content: '确定要取消这次回收预约吗？',
+      content: '确定要取消这次回收预约吗？取消后箱子将回到原来的状态。',
       success: (res) => {
         if (res.confirm) {
-          Taro.showToast({ title: '已取消', icon: 'success' });
+          cancelBooking(booking.id);
+          Taro.showToast({ title: '已取消预约', icon: 'success' });
+          setTimeout(() => {
+            Taro.navigateBack();
+          }, 1000);
+        }
+      }
+    });
+  };
+
+  const handleComplete = () => {
+    if (!booking) return;
+    Taro.showModal({
+      title: '确认完成',
+      content: '确定回收已完成吗？箱子押金将自动退回。',
+      success: (res) => {
+        if (res.confirm) {
+          completeBooking(booking.id);
+          Taro.showToast({ title: '回收已完成', icon: 'success' });
           setTimeout(() => {
             Taro.navigateBack();
           }, 1000);
@@ -225,9 +244,16 @@ const BookingDetailPage: React.FC = () => {
           <View className={styles.secondaryBtn} onClick={handleCancel}>
             <Text>取消预约</Text>
           </View>
-          <View className={styles.primaryBtn} onClick={handleCallCarrier}>
-            <Text>联系承运员</Text>
-          </View>
+          {(booking.status === 'pending' || booking.status === 'accepted') && (
+            <View className={styles.primaryBtn} onClick={handleComplete}>
+              <Text>确认回收完成</Text>
+            </View>
+          )}
+          {(booking.status === 'accepted' || booking.status === 'picked_up') && (
+            <View className={styles.outlineBtn} onClick={handleCallCarrier}>
+              <Text>联系承运员</Text>
+            </View>
+          )}
         </View>
       )}
     </View>

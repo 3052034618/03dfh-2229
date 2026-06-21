@@ -30,13 +30,25 @@ export interface DepositRecord {
 
 export interface TimelineEvent {
   id: string;
-  type: 'arrival_check' | 'booking' | 'dispute' | 'status_change';
+  type: 'arrival_check' | 'booking' | 'dispute' | 'status_change' | 'deposit';
   title: string;
   time: string;
   desc: string;
   status?: string;
   relatedId?: string;
   relatedType?: 'booking' | 'dispute';
+  previousStatus?: BoxStatus;
+}
+
+export interface StatusChangeRecord {
+  id: string;
+  boxNo: string;
+  fromStatus: BoxStatus;
+  toStatus: BoxStatus;
+  reason: string;
+  relatedBookingId?: string;
+  relatedDisputeId?: string;
+  time: string;
 }
 
 export interface ArrivalCheckItem {
@@ -67,6 +79,8 @@ export interface BoxItem {
   specs?: string;
   arrivalCheck?: ArrivalCheckRecord;
   bookingId?: string;
+  previousStatus?: BoxStatus;
+  statusChanges?: StatusChangeRecord[];
 }
 
 export interface BookingRecord {

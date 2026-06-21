@@ -8,7 +8,7 @@ import { useUser } from '@/store/user';
 import { useApp } from '@/store/app';
 import type { BoxStatus, DepositStatus } from '@/types';
 
-type TabType = 'to_return' | 'in_use' | 'arrived_today' | 'abnormal';
+type TabType = 'in_use' | 'to_return' | 'booked_for_recycle' | 'arrived_today' | 'abnormal';
 type DaysFilter = 'all' | '1-3' | '4-7' | '7+';
 type DepositFilter = 'all' | DepositStatus;
 
@@ -27,6 +27,7 @@ const HomePage: React.FC = () => {
     return {
       to_return: boxList.filter(b => b.status === 'to_return').length,
       in_use: boxList.filter(b => b.status === 'in_use').length,
+      booked_for_recycle: boxList.filter(b => b.status === 'booked_for_recycle').length,
       arrived_today: boxList.filter(b => b.status === 'arrived_today').length,
       abnormal: boxList.filter(b => b.status === 'abnormal').length
     };
@@ -52,7 +53,7 @@ const HomePage: React.FC = () => {
     return list;
   }, [boxList, activeTab, daysFilter, depositFilter]);
 
-  const showFilters = activeTab === 'in_use' || activeTab === 'to_return';
+  const showFilters = activeTab === 'in_use' || activeTab === 'to_return' || activeTab === 'booked_for_recycle';
 
   const handleTabClick = (tab: TabType) => {
     setActiveTab(tab);
@@ -86,6 +87,7 @@ const HomePage: React.FC = () => {
     const map: Record<TabType, string> = {
       to_return: '待归还',
       in_use: '使用中',
+      booked_for_recycle: '已预约回收',
       arrived_today: '今日到货',
       abnormal: '异常待确认'
     };
@@ -129,41 +131,54 @@ const HomePage: React.FC = () => {
 
       <View className={styles.section}>
         <View className={styles.statCards}>
-          <View
-            className={classnames(styles.statCard, activeTab === 'in_use' && styles.statCardActive)}
-            onClick={() => handleTabClick('in_use')}
-          >
-            <Text className={classnames(styles.statNumber, styles.statNumberPrimary)}>
-              {stats.in_use}
-            </Text>
-            <Text className={styles.statLabel}>使用中</Text>
+          <View className={styles.statRow}>
+            <View
+              className={classnames(styles.statCard, activeTab === 'in_use' && styles.statCardActive)}
+              onClick={() => handleTabClick('in_use')}
+            >
+              <Text className={classnames(styles.statNumber, styles.statNumberPrimary)}>
+                {stats.in_use}
+              </Text>
+              <Text className={styles.statLabel}>使用中</Text>
+            </View>
+            <View
+              className={classnames(styles.statCard, activeTab === 'to_return' && styles.statCardActive)}
+              onClick={() => handleTabClick('to_return')}
+            >
+              <Text className={classnames(styles.statNumber, styles.statNumberWarning)}>
+                {stats.to_return}
+              </Text>
+              <Text className={styles.statLabel}>待归还箱</Text>
+            </View>
+            <View
+              className={classnames(styles.statCard, activeTab === 'booked_for_recycle' && styles.statCardActive)}
+              onClick={() => handleTabClick('booked_for_recycle')}
+            >
+              <Text className={classnames(styles.statNumber, styles.statNumberCold)}>
+                {stats.booked_for_recycle}
+              </Text>
+              <Text className={styles.statLabel}>已预约回收</Text>
+            </View>
           </View>
-          <View
-            className={classnames(styles.statCard, activeTab === 'to_return' && styles.statCardActive)}
-            onClick={() => handleTabClick('to_return')}
-          >
-            <Text className={classnames(styles.statNumber, styles.statNumberWarning)}>
-              {stats.to_return}
-            </Text>
-            <Text className={styles.statLabel}>待归还箱</Text>
-          </View>
-          <View
-            className={classnames(styles.statCard, activeTab === 'arrived_today' && styles.statCardActive)}
-            onClick={() => handleTabClick('arrived_today')}
-          >
-            <Text className={classnames(styles.statNumber, styles.statNumberInfo)}>
-              {stats.arrived_today}
-            </Text>
-            <Text className={styles.statLabel}>今日到货</Text>
-          </View>
-          <View
-            className={classnames(styles.statCard, activeTab === 'abnormal' && styles.statCardActive)}
-            onClick={() => handleTabClick('abnormal')}
-          >
-            <Text className={classnames(styles.statNumber, styles.statNumberError)}>
-              {stats.abnormal}
-            </Text>
-            <Text className={styles.statLabel}>异常待确认</Text>
+          <View className={styles.statRow}>
+            <View
+              className={classnames(styles.statCard, activeTab === 'arrived_today' && styles.statCardActive)}
+              onClick={() => handleTabClick('arrived_today')}
+            >
+              <Text className={classnames(styles.statNumber, styles.statNumberInfo)}>
+                {stats.arrived_today}
+              </Text>
+              <Text className={styles.statLabel}>今日到货</Text>
+            </View>
+            <View
+              className={classnames(styles.statCard, activeTab === 'abnormal' && styles.statCardActive)}
+              onClick={() => handleTabClick('abnormal')}
+            >
+              <Text className={classnames(styles.statNumber, styles.statNumberError)}>
+                {stats.abnormal}
+              </Text>
+              <Text className={styles.statLabel}>异常待确认</Text>
+            </View>
           </View>
         </View>
 

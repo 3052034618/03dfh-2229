@@ -68,7 +68,8 @@ export const getDepositText = (status: string): string => {
   const map: Record<string, string> = {
     'paid': '押金已交',
     'unpaid': '未交押金',
-    'refunded': '押金已退'
+    'refunded': '押金已退',
+    'frozen': '押金已冻结'
   };
   return map[status] || status;
 };

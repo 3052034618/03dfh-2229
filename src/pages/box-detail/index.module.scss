@@ -151,6 +151,32 @@
   }
 }
 
+.timelineItemHighlight {
+  .timelineContent {
+    background-color: rgba($color-primary, 0.06);
+    border: 2rpx solid rgba($color-primary, 0.3);
+  }
+}
+
+.timelineStatusChange {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: $spacing-xs;
+  display: block;
+  background-color: rgba($color-warning, 0.06);
+  padding: 4rpx 12rpx;
+  border-radius: $radius-sm;
+  display: inline-block;
+}
+
+.timelineDeposit {
+  font-size: $font-size-xs;
+  color: $color-primary;
+  margin-top: $spacing-xs;
+  display: block;
+  font-weight: $font-weight-medium;
+}
+
 .timelineHeader {
   display: flex;
   justify-content: space-between;

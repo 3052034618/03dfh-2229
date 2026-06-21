@@ -54,8 +54,14 @@
 
 .statCards {
   display: flex;
+  flex-direction: column;
   gap: $spacing-sm;
   margin-bottom: $spacing-lg;
+}
+
+.statRow {
+  display: flex;
+  gap: $spacing-sm;
 }
 
 .statCard {
@@ -98,6 +104,10 @@
 }
 
 .statNumberPrimary {
+  color: $color-cold;
+}
+
+.statNumberCold {
   color: $color-cold;
 }
 

@@ -168,11 +168,12 @@
   padding: $spacing-lg;
   margin-bottom: $spacing-md;
   box-shadow: $shadow-card;
-  transition: all $transition-base;
+  border: 2rpx solid transparent;
+}
 
-  &:active {
-    opacity: 0.9;
-  }
+.recordCardHighlight {
+  border-color: $color-primary;
+  background-color: rgba($color-primary, 0.03);
 }
 
 .recordHeader {
