@@ -9,6 +9,19 @@
   white-space: nowrap;
 }
 
+.normal {
+  padding: 4rpx 16rpx;
+}
+
+.small {
+  padding: 2rpx 12rpx;
+  border-radius: $radius-xs;
+  
+  .tagText {
+    font-size: 20rpx;
+  }
+}
+
 .tagText {
   font-size: $font-size-xs;
   line-height: 1.4;

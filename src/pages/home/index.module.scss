@@ -122,6 +122,8 @@
   flex-direction: column;
   align-items: center;
   gap: $spacing-sm;
+  flex: 1;
+  max-width: 25%;
 
   &:active {
     opacity: 0.8;
@@ -145,6 +147,10 @@
 
 .actionIconGreen {
   background-color: rgba($color-success, 0.1);
+}
+
+.actionIconCold {
+  background-color: rgba($color-cold, 0.1);
 }
 
 .actionText {

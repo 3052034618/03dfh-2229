@@ -145,6 +145,26 @@
   padding: $spacing-md;
 }
 
+.timelineItemClickable {
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.timelineHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xs;
+}
+
+.timelineAction {
+  font-size: $font-size-xs;
+  color: $color-primary;
+  margin-top: $spacing-xs;
+  display: block;
+}
+
 .timelineTitle {
   font-size: $font-size-md;
   font-weight: $font-weight-medium;

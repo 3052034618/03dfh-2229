@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import classnames from 'classnames';
@@ -6,17 +6,11 @@ import styles from './index.module.scss';
 import StatusTag from '@/components/StatusTag';
 import { useApp } from '@/store/app';
 import { formatDateTime, getStatusText, getDepositText } from '@/utils';
-import type { BoxItem } from '@/types';
-
-interface TimelineRecord {
-  title: string;
-  time: string;
-  desc: string;
-}
+import type { BoxItem, TimelineEvent } from '@/types';
 
 const BoxDetailPage: React.FC = () => {
   const router = useRouter();
-  const { getBoxById, getBoxByNo } = useApp();
+  const { getBoxById, getBoxByNo, getTimelineForBox } = useApp();
   const [box, setBox] = useState<BoxItem | null>(null);
 
   useEffect(() => {
@@ -39,23 +33,28 @@ const BoxDetailPage: React.FC = () => {
     }
   }, [router.params.id, router.params.boxNo, getBoxById, getBoxByNo]);
 
-  const timeline: TimelineRecord[] = box ? [
-    {
-      title: '送到门店',
-      time: box.borrowTime,
-      desc: `已送达 ${box.latestLocation || '门店'}`
-    },
-    {
-      title: '开始配送',
-      time: '2024-06-15 08:00',
-      desc: '承运员李师傅已取件，正在配送中'
-    },
-    {
-      title: '出库完成',
-      time: '2024-06-14 18:00',
-      desc: '箱体已从冷链中心出库'
+  const timeline = useMemo((): TimelineEvent[] => {
+    if (!box) return [];
+    return getTimelineForBox(box.boxNo);
+  }, [box, getTimelineForBox]);
+
+  const getTimelineIcon = (type: string): string => {
+    const map: Record<string, string> = {
+      'arrival_check': '✅',
+      'booking': '🚚',
+      'dispute': '💬',
+      'status_change': '📦'
+    };
+    return map[type] || '📋';
+  };
+
+  const handleTimelineClick = (event: TimelineEvent) => {
+    if (event.relatedType === 'booking' && event.relatedId) {
+      Taro.navigateTo({ url: `/pages/booking-detail/index?id=${event.relatedId}` });
+    } else if (event.relatedType === 'dispute' && event.relatedId) {
+      Taro.navigateTo({ url: `/pages/dispute/index?disputeId=${event.relatedId}` });
     }
-  ] : [];
+  };
 
   const handleRecycle = () => {
     Taro.switchTab({ url: '/pages/recycle/index' });
@@ -179,21 +178,42 @@ const BoxDetailPage: React.FC = () => {
       )}
 
       <View className={styles.section}>
-        <Text className={styles.sectionTitle}>流转记录</Text>
+        <Text className={styles.sectionTitle}>全链路追溯</Text>
         <View className={styles.infoCard}>
           <View className={styles.timeline}>
-            {timeline.map((item, index) => (
-              <View key={index} className={styles.timelineItem}>
+            {timeline.map((event, index) => (
+              <View
+                key={event.id}
+                className={classnames(
+                  styles.timelineItem,
+                  event.relatedType && styles.timelineItemClickable
+                )}
+                onClick={() => handleTimelineClick(event)}
+              >
                 <View
                   className={classnames(
                     styles.timelineDot,
                     index === 0 && styles.timelineDotFirst
                   )}
-                />
+                >
+                  <Text className={styles.timelineIcon}>{getTimelineIcon(event.type)}</Text>
+                </View>
                 <View className={styles.timelineContent}>
-                  <Text className={styles.timelineTitle}>{item.title}</Text>
-                  <Text className={styles.timelineTime}>{item.time}</Text>
-                  <Text className={styles.timelineDesc}>{item.desc}</Text>
+                  <View className={styles.timelineHeader}>
+                    <Text className={styles.timelineTitle}>{event.title}</Text>
+                    {event.status && (
+                      <StatusTag
+                        status={event.status}
+                        text={getStatusText(event.status, event.relatedType as any)}
+                        size="small"
+                      />
+                    )}
+                  </View>
+                  <Text className={styles.timelineTime}>{formatDateTime(event.time)}</Text>
+                  <Text className={styles.timelineDesc}>{event.desc}</Text>
+                  {event.relatedType && (
+                    <Text className={styles.timelineAction}>点击查看详情 ›</Text>
+                  )}
                 </View>
               </View>
             ))}

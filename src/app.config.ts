@@ -5,9 +5,10 @@ export default defineAppConfig({
     'pages/scan/index',
     'pages/recycle/index',
     'pages/mine/index',
-    'pages/box-detail/index',
+    'pages/booking-detail/index',
     'pages/dispute/index',
-    'pages/booking-detail/index'
+    'pages/box-detail/index',
+    'pages/deposit/index'
   ],
   window: {
     backgroundTextStyle: 'light',

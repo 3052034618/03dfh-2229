@@ -7,6 +7,7 @@ interface StatusTagProps {
   status: string;
   type?: 'default' | 'success' | 'warning' | 'error' | 'info' | 'cold';
   text?: string;
+  size?: 'normal' | 'small';
 }
 
 const typeMap: Record<string, string> = {
@@ -24,6 +25,7 @@ const statusTypeMap: Record<string, string> = {
   'abnormal': 'error',
   'in_use': 'success',
   'returned': 'default',
+  'booked_for_recycle': 'cold',
   'pending': 'warning',
   'accepted': 'info',
   'picked_up': 'success',
@@ -31,15 +33,19 @@ const statusTypeMap: Record<string, string> = {
   'cancelled': 'default',
   'reviewing': 'warning',
   'resolved': 'success',
-  'rejected': 'error'
+  'rejected': 'error',
+  'paid': 'success',
+  'unpaid': 'warning',
+  'refunded': 'default',
+  'frozen': 'error'
 };
 
-const StatusTag: React.FC<StatusTagProps> = ({ status, type, text }) => {
+const StatusTag: React.FC<StatusTagProps> = ({ status, type, text, size = 'normal' }) => {
   const tagType = type || statusTypeMap[status] || 'default';
   const displayText = text || status;
 
   return (
-    <View className={classnames(styles.tag, styles[typeMap[tagType] || 'default'])}>
+    <View className={classnames(styles.tag, styles[typeMap[tagType] || 'default'], styles[size])}>
       <Text className={styles.tagText}>{displayText}</Text>
     </View>
   );

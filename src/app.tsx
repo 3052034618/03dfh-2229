@@ -8,14 +8,17 @@ const AuthChecker: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isLoggedIn, isLoading } = useUser();
   const router = useRouter();
 
+  const currentPath = router.path;
+  const publicPages = ['pages/login/index'];
+  const isPublicPage = publicPages.some(p => currentPath.includes(p));
+
   const checkAuth = () => {
-    if (isLoading) return;
+    if (isLoading) {
+      console.log('[Auth] still loading, skip check');
+      return;
+    }
 
-    const currentPath = router.path;
-    console.log('[Auth] check auth:', currentPath, 'loggedIn:', isLoggedIn);
-
-    const publicPages = ['pages/login/index'];
-    const isPublicPage = publicPages.some(p => currentPath.includes(p));
+    console.log('[Auth] check auth:', currentPath, 'loggedIn:', isLoggedIn, 'isPublic:', isPublicPage);
 
     if (!isLoggedIn && !isPublicPage) {
       console.log('[Auth] not logged in, redirect to login');
@@ -38,6 +41,12 @@ const AuthChecker: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   });
 
   if (isLoading) {
+    console.log('[Auth] render blank, loading...');
+    return null;
+  }
+
+  if (!isLoggedIn && !isPublicPage) {
+    console.log('[Auth] not logged in on private page, render blank');
     return null;
   }
 

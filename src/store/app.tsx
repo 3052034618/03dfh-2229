@@ -1,24 +1,29 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect, useMemo } from 'react';
 import Taro from '@tarojs/taro';
-import type { BoxItem, BookingRecord, DisputeRecord, ArrivalCheckRecord } from '@/types';
-import { mockBoxList, mockBookingList, mockDisputeList } from '@/data/mock';
+import type { BoxItem, BookingRecord, DisputeRecord, ArrivalCheckRecord, DepositRecord, TimelineEvent } from '@/types';
+import { mockBoxList, mockBookingList, mockDisputeList, mockDepositList } from '@/data/mock';
+import { formatDateTime, getStatusText } from '@/utils';
 
 interface AppContextType {
   boxList: BoxItem[];
   bookingList: BookingRecord[];
   disputeList: DisputeRecord[];
+  depositList: DepositRecord[];
   updateBoxStatus: (boxId: string, status: BoxItem['status']) => void;
   updateBox: (boxId: string, data: Partial<BoxItem>) => void;
   addBox: (box: BoxItem) => void;
   setArrivalCheck: (boxId: string, checkRecord: ArrivalCheckRecord) => void;
-  addBooking: (booking: BookingRecord) => void;
+  addBooking: (booking: BookingRecord, boxIds?: string[]) => void;
   updateBooking: (id: string, data: Partial<BookingRecord>) => void;
   addDispute: (dispute: DisputeRecord) => void;
   updateDispute: (id: string, data: Partial<DisputeRecord>) => void;
+  addDepositRecord: (record: DepositRecord) => void;
   resetAllData: () => void;
   getBoxById: (id: string) => BoxItem | undefined;
   getBoxByNo: (boxNo: string) => BoxItem | undefined;
   getBookingById: (id: string) => BookingRecord | undefined;
+  getDisputeById: (id: string) => DisputeRecord | undefined;
+  getTimelineForBox: (boxNo: string) => TimelineEvent[];
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -60,6 +65,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [boxList, setBoxList] = useState<BoxItem[]>(mockBoxList);
   const [bookingList, setBookingList] = useState<BookingRecord[]>(mockBookingList);
   const [disputeList, setDisputeList] = useState<DisputeRecord[]>(mockDisputeList);
+  const [depositList, setDepositList] = useState<DepositRecord[]>(mockDepositList);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -68,6 +74,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         if (data.boxList) setBoxList(data.boxList);
         if (data.bookingList) setBookingList(data.bookingList);
         if (data.disputeList) setDisputeList(data.disputeList);
+        if (data.depositList) setDepositList(data.depositList);
         console.log('[AppStore] data loaded from storage');
       }
       setLoaded(true);
@@ -76,9 +83,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   useEffect(() => {
     if (loaded) {
-      saveToStorage({ boxList, bookingList, disputeList });
+      saveToStorage({ boxList, bookingList, disputeList, depositList });
     }
-  }, [boxList, bookingList, disputeList, loaded]);
+  }, [boxList, bookingList, disputeList, depositList, loaded]);
 
   const updateBoxStatus = useCallback((boxId: string, status: BoxItem['status']) => {
     console.log('[AppStore] updateBoxStatus', { boxId, status });
@@ -118,9 +125,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     );
   }, []);
 
-  const addBooking = useCallback((booking: BookingRecord) => {
-    console.log('[AppStore] addBooking', booking.id);
+  const addBooking = useCallback((booking: BookingRecord, boxIds?: string[]) => {
+    console.log('[AppStore] addBooking', booking.id, 'boxes:', boxIds);
     setBookingList(prev => [booking, ...prev]);
+    
+    if (boxIds && boxIds.length > 0) {
+      setBoxList(prev =>
+        prev.map(box => {
+          if (boxIds.includes(box.id) || boxIds.includes(box.boxNo)) {
+            return { ...box, status: 'booked_for_recycle', bookingId: booking.id };
+          }
+          return box;
+        })
+      );
+    }
   }, []);
 
   const updateBooking = useCallback((id: string, data: Partial<BookingRecord>) => {
@@ -142,11 +160,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     );
   }, []);
 
+  const addDepositRecord = useCallback((record: DepositRecord) => {
+    console.log('[AppStore] addDepositRecord', record.id);
+    setDepositList(prev => [record, ...prev]);
+  }, []);
+
   const resetAllData = useCallback(() => {
     console.log('[AppStore] resetAllData');
     setBoxList(mockBoxList);
     setBookingList(mockBookingList);
     setDisputeList(mockDisputeList);
+    setDepositList(mockDepositList);
     clearStorage();
   }, []);
 
@@ -162,12 +186,77 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return bookingList.find(b => b.id === id);
   }, [bookingList]);
 
+  const getDisputeById = useCallback((id: string) => {
+    return disputeList.find(d => d.id === id);
+  }, [disputeList]);
+
+  const getTimelineForBox = useCallback((boxNo: string): TimelineEvent[] => {
+    const events: TimelineEvent[] = [];
+    const box = boxList.find(b => b.boxNo === boxNo);
+
+    if (box?.arrivalCheck) {
+      events.push({
+        id: `arrival_${boxNo}`,
+        type: 'arrival_check',
+        title: '到货检查',
+        time: box.arrivalCheck.checkTime,
+        desc: box.arrivalCheck.abnormalDesc || '到货检查已完成，箱体状态正常',
+        status: box.arrivalCheck.items.every(i => i.value === 'normal') ? 'normal' : 'abnormal',
+        relatedId: box.id,
+        relatedType: undefined
+      });
+    }
+
+    const boxBookings = bookingList.filter(b => b.boxNos?.includes(boxNo));
+    boxBookings.forEach(booking => {
+      events.push({
+        id: `booking_${booking.id}`,
+        type: 'booking',
+        title: '预约回收',
+        time: booking.createTime,
+        desc: `预约时间：${booking.timeSlot}，箱数：${booking.boxCount}个`,
+        status: booking.status,
+        relatedId: booking.id,
+        relatedType: 'booking'
+      });
+    });
+
+    const boxDisputes = disputeList.filter(d => d.boxNo === boxNo);
+    boxDisputes.forEach(dispute => {
+      const typeText = dispute.type === 'not_returned' ? '未归还争议' : dispute.type === 'damaged' ? '损坏争议' : '其他问题';
+      events.push({
+        id: `dispute_${dispute.id}`,
+        type: 'dispute',
+        title: typeText,
+        time: dispute.createTime,
+        desc: dispute.description.slice(0, 50) + (dispute.description.length > 50 ? '...' : ''),
+        status: dispute.status,
+        relatedId: dispute.id,
+        relatedType: 'dispute'
+      });
+    });
+
+    if (box?.borrowTime) {
+      events.push({
+        id: `status_${boxNo}_borrow`,
+        type: 'status_change',
+        title: '开始借用',
+        time: box.borrowTime,
+        desc: `箱体送达 ${box.latestLocation || '门店'}，开始占用`,
+        status: 'in_use'
+      });
+    }
+
+    return events.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+  }, [boxList, bookingList, disputeList]);
+
   return (
     <AppContext.Provider
       value={{
         boxList,
         bookingList,
         disputeList,
+        depositList,
         updateBoxStatus,
         updateBox,
         addBox,
@@ -176,10 +265,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         updateBooking,
         addDispute,
         updateDispute,
+        addDepositRecord,
         resetAllData,
         getBoxById,
         getBoxByNo,
-        getBookingById
+        getBookingById,
+        getDisputeById,
+        getTimelineForBox
       }}
     >
       {children}

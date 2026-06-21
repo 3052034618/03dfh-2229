@@ -9,9 +9,35 @@ export interface UserInfo {
   totalBoxes: number;
 }
 
-export type BoxStatus = 'to_return' | 'arrived_today' | 'abnormal' | 'in_use' | 'returned';
+export type BoxStatus = 'to_return' | 'arrived_today' | 'abnormal' | 'in_use' | 'returned' | 'booked_for_recycle';
 
-export type DepositStatus = 'paid' | 'unpaid' | 'refunded';
+export type DepositStatus = 'paid' | 'unpaid' | 'refunded' | 'frozen';
+
+export type DepositType = 'occupy' | 'refund' | 'freeze' | 'unfreeze';
+
+export interface DepositRecord {
+  id: string;
+  boxNo: string;
+  type: DepositType;
+  amount: number;
+  status: DepositStatus;
+  description: string;
+  relatedBookingId?: string;
+  relatedDisputeId?: string;
+  createTime: string;
+  operator?: string;
+}
+
+export interface TimelineEvent {
+  id: string;
+  type: 'arrival_check' | 'booking' | 'dispute' | 'status_change';
+  title: string;
+  time: string;
+  desc: string;
+  status?: string;
+  relatedId?: string;
+  relatedType?: 'booking' | 'dispute';
+}
 
 export interface ArrivalCheckItem {
   label: string;
@@ -40,6 +66,7 @@ export interface BoxItem {
   latestLocation?: string;
   specs?: string;
   arrivalCheck?: ArrivalCheckRecord;
+  bookingId?: string;
 }
 
 export interface BookingRecord {

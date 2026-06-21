@@ -78,6 +78,24 @@
   font-weight: $font-weight-semibold;
 }
 
+.boxList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  flex: 1;
+  margin-left: $spacing-md;
+}
+
+.boxTag {
+  padding: $spacing-xs $spacing-md;
+  background-color: rgba($color-primary, 0.08);
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  color: $color-primary;
+  border: 1rpx solid rgba($color-primary, 0.3);
+}
+
 .carrierCard {
   background-color: $color-bg-card;
   border-radius: $radius-lg;

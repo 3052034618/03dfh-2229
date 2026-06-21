@@ -27,9 +27,9 @@ const MinePage: React.FC = () => {
       },
       {
         icon: '💰',
-        text: '押金管理',
+        text: '押金流水',
         action: () => {
-          Taro.showToast({ title: '功能开发中', icon: 'none' });
+          Taro.navigateTo({ url: '/pages/deposit/index' });
         }
       },
       {

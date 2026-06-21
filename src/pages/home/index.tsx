@@ -72,6 +72,10 @@ const HomePage: React.FC = () => {
     Taro.navigateTo({ url: '/pages/dispute/index' });
   };
 
+  const handleDeposit = () => {
+    Taro.navigateTo({ url: '/pages/deposit/index' });
+  };
+
   const handleRefresh = () => {
     setTimeout(() => {
       Taro.stopPullDownRefresh();
@@ -175,6 +179,10 @@ const HomePage: React.FC = () => {
           <View className={styles.actionItem} onClick={handleDispute}>
             <View className={classnames(styles.actionIcon, styles.actionIconGreen)}>💬</View>
             <Text className={styles.actionText}>争议反馈</Text>
+          </View>
+          <View className={styles.actionItem} onClick={handleDeposit}>
+            <View className={classnames(styles.actionIcon, styles.actionIconCold)}>💰</View>
+            <Text className={styles.actionText}>押金流水</Text>
           </View>
         </View>
 

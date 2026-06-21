@@ -1,4 +1,4 @@
-import type { BoxItem, BookingRecord, DisputeRecord, UserInfo } from '@/types';
+import type { BoxItem, BookingRecord, DisputeRecord, UserInfo, DepositRecord } from '@/types';
 
 export const mockUser: UserInfo = {
   id: 'u001',
@@ -181,4 +181,63 @@ export const mockArrivalCheckItems = [
   { label: '箱体外观', key: 'appearance', value: '' },
   { label: '封签完好', key: 'seal', value: '' },
   { label: '温度指示卡', key: 'temperature', value: '' }
+];
+
+export const mockDepositList: DepositRecord[] = [
+  {
+    id: 'dp001',
+    boxNo: 'LWX-2024-08921',
+    type: 'occupy',
+    amount: 300,
+    status: 'paid',
+    description: '箱体借用，押金占用',
+    createTime: '2024-06-16 09:30'
+  },
+  {
+    id: 'dp002',
+    boxNo: 'LWX-2024-08922',
+    type: 'occupy',
+    amount: 300,
+    status: 'paid',
+    description: '箱体借用，押金占用',
+    createTime: '2024-06-18 14:20'
+  },
+  {
+    id: 'dp003',
+    boxNo: 'LWX-2024-08923',
+    type: 'occupy',
+    amount: 300,
+    status: 'unpaid',
+    description: '箱体借用，押金未付',
+    createTime: '2024-06-14 10:00'
+  },
+  {
+    id: 'dp004',
+    boxNo: 'LWX-2024-08856',
+    type: 'freeze',
+    amount: 300,
+    status: 'frozen',
+    description: '箱体温度异常，押金冻结',
+    relatedDisputeId: 'dp002',
+    createTime: '2024-06-20 11:00'
+  },
+  {
+    id: 'dp005',
+    boxNo: 'LWX-2024-08800',
+    type: 'refund',
+    amount: 300,
+    status: 'refunded',
+    description: '箱体归还，押金退还',
+    relatedBookingId: 'bk002',
+    createTime: '2024-06-20 16:30'
+  },
+  {
+    id: 'dp006',
+    boxNo: 'LWX-2024-08890',
+    type: 'occupy',
+    amount: 300,
+    status: 'paid',
+    description: '箱体借用，押金占用',
+    createTime: '2024-06-19 16:00'
+  }
 ];

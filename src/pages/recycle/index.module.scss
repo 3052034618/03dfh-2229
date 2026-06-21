@@ -60,6 +60,168 @@
   margin-bottom: $spacing-md;
 }
 
+.formHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+}
+
+.selectAllText {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.boxCountInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-md;
+  border-bottom: 1rpx solid $color-divider;
+}
+
+.boxCountLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.boxCountValue {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.boxCountHighlight {
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-md;
+}
+
+.boxSelector {
+  max-height: 500rpx;
+  overflow-y: auto;
+  margin-bottom: $spacing-md;
+}
+
+.emptySelector {
+  padding: $spacing-xl 0;
+  text-align: center;
+}
+
+.emptyText {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.boxSelectItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-md;
+  margin-bottom: $spacing-sm;
+  background-color: $color-bg-gray;
+  border-radius: $radius-md;
+  border: 2rpx solid transparent;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.boxSelectItemActive {
+  background-color: rgba($color-primary, 0.05);
+  border-color: $color-primary;
+}
+
+.boxSelectCheckbox {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: $radius-sm;
+  border: 2rpx solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: $spacing-md;
+  flex-shrink: 0;
+}
+
+.boxSelectItemActive .boxSelectCheckbox {
+  background-color: $color-primary;
+  border-color: $color-primary;
+}
+
+.checkIcon {
+  color: $color-text-white;
+  font-size: 24rpx;
+  font-weight: $font-weight-bold;
+}
+
+.boxSelectInfo {
+  flex: 1;
+}
+
+.boxSelectHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xs;
+}
+
+.boxSelectNo {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.boxSelectMeta {
+  display: flex;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+}
+
+.boxMetaItem {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.depositPaid {
+  color: $color-success;
+}
+
+.depositUnpaid {
+  color: $color-warning;
+}
+
+.recordBoxNos {
+  padding-top: $spacing-sm;
+  margin-bottom: $spacing-sm;
+  display: flex;
+  gap: $spacing-xs;
+  flex-wrap: wrap;
+}
+
+.recordBoxNosLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  flex-shrink: 0;
+}
+
+.recordBoxNosValue {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  flex: 1;
+  word-break: break-all;
+}
+
+.submitBarInfo {
+  display: none;
+}
+
 .formItem {
   padding: $spacing-md 0;
   border-bottom: 1rpx solid $color-divider;
@@ -242,10 +404,35 @@
   padding-bottom: calc(#{$spacing-md} + env(safe-area-inset-bottom));
   background-color: $color-bg-card;
   box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.submitBarInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.submitBarLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.submitBarCount {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.submitBarCountHighlight {
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-lg;
 }
 
 .submitBtn {
-  width: 100%;
+  flex: 1;
   height: $button-height-lg;
   background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
   border-radius: $radius-button;
