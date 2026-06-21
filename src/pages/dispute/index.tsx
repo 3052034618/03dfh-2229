@@ -4,7 +4,7 @@ import Taro, { useRouter } from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 import StatusTag from '@/components/StatusTag';
-import { mockDisputeList } from '@/data/mock';
+import { useApp } from '@/store/app';
 import { formatDateTime, getStatusText, generateId } from '@/utils';
 import type { DisputeRecord } from '@/types';
 
@@ -16,11 +16,11 @@ const disputeTypes = [
 
 const DisputePage: React.FC = () => {
   const router = useRouter();
+  const { disputeList, addDispute } = useApp();
   const [boxNo, setBoxNo] = useState('');
   const [type, setType] = useState<string>('not_returned');
   const [description, setDescription] = useState('');
   const [images, setImages] = useState<string[]>([]);
-  const [disputeList, setDisputeList] = useState<DisputeRecord[]>(mockDisputeList);
   const [showSuccess, setShowSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -81,13 +81,13 @@ const DisputePage: React.FC = () => {
         id: generateId(),
         boxNo,
         type: type as DisputeRecord['type'],
-        status: 'pending',
+        status: 'reviewing',
         description,
         images,
         createTime: new Date().toISOString()
       };
 
-      setDisputeList(prev => [newDispute, ...prev]);
+      addDispute(newDispute);
       setShowSuccess(true);
     } catch (err) {
       console.error('[Dispute] submit error:', err);
@@ -178,7 +178,11 @@ const DisputePage: React.FC = () => {
           <View key={record.id} className={styles.recordCard}>
             <View className={styles.recordHeader}>
               <Text className={styles.recordBoxNo}>{record.boxNo}</Text>
-              <StatusTag status={record.status} text={getStatusText(record.status)} />
+              <StatusTag
+                status={record.status}
+                text={getStatusText(record.status, 'dispute')}
+                type={record.status === 'reviewing' ? 'warning' : undefined}
+              />
             </View>
             <Text className={styles.recordDesc}>{record.description}</Text>
             {record.images.length > 0 && (

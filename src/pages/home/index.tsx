@@ -5,19 +5,18 @@ import classnames from 'classnames';
 import styles from './index.module.scss';
 import BoxCard from '@/components/BoxCard';
 import { useUser } from '@/store/user';
-import { mockBoxList } from '@/data/mock';
-import { maskPhone } from '@/utils';
+import { useApp } from '@/store/app';
 import type { BoxStatus } from '@/types';
 
 type TabType = 'all' | 'to_return' | 'arrived_today' | 'abnormal';
 
 const HomePage: React.FC = () => {
   const { user } = useUser();
+  const { boxList } = useApp();
   const [activeTab, setActiveTab] = useState<TabType>('to_return');
-  const [boxList, setBoxList] = useState(mockBoxList);
 
   useDidShow(() => {
-    console.log('[Home] page did show');
+    console.log('[Home] page did show, box count:', boxList.length);
   });
 
   const stats = useMemo(() => {

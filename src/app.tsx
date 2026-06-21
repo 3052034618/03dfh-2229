@@ -1,7 +1,28 @@
-import React, { useEffect } from 'react';
-import { useDidShow, useDidHide } from '@tarojs/taro';
-import { UserProvider } from './store/user';
+import React, { useEffect, useContext } from 'react';
+import Taro, { useDidShow, useDidHide, useRouter } from '@tarojs/taro';
+import { UserProvider, useUser } from './store/user';
+import { AppProvider } from './store/app';
 import './app.scss';
+
+const AuthChecker: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isLoggedIn } = useUser();
+  const router = useRouter();
+
+  useDidShow(() => {
+    const currentPath = router.path;
+    console.log('[Auth] page show:', currentPath, 'loggedIn:', isLoggedIn);
+
+    const publicPages = ['pages/login/index'];
+    const isPublicPage = publicPages.some(p => currentPath.includes(p));
+
+    if (!isLoggedIn && !isPublicPage) {
+      console.log('[Auth] redirect to login');
+      Taro.reLaunch({ url: '/pages/login/index' });
+    }
+  });
+
+  return <>{children}</>;
+};
 
 function App(props) {
   useEffect(() => {
@@ -18,7 +39,11 @@ function App(props) {
 
   return (
     <UserProvider>
-      {props.children}
+      <AppProvider>
+        <AuthChecker>
+          {props.children}
+        </AuthChecker>
+      </AppProvider>
     </UserProvider>
   );
 }

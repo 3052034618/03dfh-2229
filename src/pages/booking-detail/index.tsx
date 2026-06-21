@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
-import { mockBookingList } from '@/data/mock';
+import { useApp } from '@/store/app';
 import { formatDateTime, getStatusText } from '@/utils';
 import type { BookingRecord } from '@/types';
 
@@ -16,52 +16,57 @@ interface TimelineStep {
 
 const BookingDetailPage: React.FC = () => {
   const router = useRouter();
+  const { getBookingById, bookingList } = useApp();
   const [booking, setBooking] = useState<BookingRecord | null>(null);
 
   useEffect(() => {
     const id = router.params.id;
     console.log('[BookingDetail] booking id:', id);
-    const found = mockBookingList.find(b => b.id === id);
+    const found = getBookingById(id || '');
     if (found) {
+      console.log('[BookingDetail] found booking:', found.id, found.timeSlot, found.boxCount);
       setBooking(found);
     } else {
-      setBooking(mockBookingList[0]);
+      console.log('[BookingDetail] booking not found, using first in list');
+      setBooking(bookingList[0] || null);
     }
-  }, [router.params.id]);
+  }, [router.params.id, getBookingById, bookingList]);
 
-  const getTimeline = (): TimelineStep[] => {
+  const getTimeline = useMemo((): TimelineStep[] => {
     if (!booking) return [];
 
     const steps: TimelineStep[] = [
       { title: '提交预约', time: booking.createTime, done: true },
-      { title: '承运员接单', time: '', done: false },
+      { title: '待承运员接单', time: '', done: false },
       { title: '承运员取件', time: '', done: false },
       { title: '回收完成', time: '', done: false }
     ];
 
     if (booking.status === 'pending') {
-      return steps.map((s, i) => ({ ...s, current: i === 1 }));
+      steps[1] = { ...steps[1], title: '待承运员接单', current: true };
+      return steps;
     }
 
     if (booking.status === 'accepted') {
-      steps[1] = { ...steps[1], done: true, time: booking.createTime };
+      steps[1] = { ...steps[1], title: '承运员已接单', done: true, time: booking.createTime };
       steps[2] = { ...steps[2], current: true };
       return steps;
     }
 
     if (booking.status === 'picked_up') {
-      steps[1] = { ...steps[1], done: true, time: booking.createTime };
+      steps[1] = { ...steps[1], title: '承运员已接单', done: true, time: booking.createTime };
       steps[2] = { ...steps[2], done: true, time: booking.createTime };
       steps[3] = { ...steps[3], current: true };
       return steps;
     }
 
     if (booking.status === 'completed') {
+      steps[1] = { ...steps[1], title: '承运员已接单' };
       return steps.map(s => ({ ...s, done: true, time: s.time || booking.createTime }));
     }
 
     return steps;
-  };
+  }, [booking]);
 
   const getStatusIcon = (): string => {
     if (!booking) return '📦';
@@ -116,8 +121,8 @@ const BookingDetailPage: React.FC = () => {
             <View>
               <Text className={styles.statusText}>{getStatusText(booking.status)}</Text>
               <View className={styles.statusDesc}>
-                {booking.status === 'pending' && '请耐心等待承运员接单'}
-                {booking.status === 'accepted' && `预计 ${booking.estimatedArrivalTime || '14:30'} 到达`}
+                {booking.status === 'pending' && '已提交预约，请耐心等待承运员接单'}
+                {booking.status === 'accepted' && `承运员已接单，预计 ${booking.estimatedArrivalTime || '14:30'} 到达`}
                 {booking.status === 'picked_up' && '承运员已取件，正在运回'}
                 {booking.status === 'completed' && '本次回收已完成'}
                 {booking.status === 'cancelled' && '预约已取消'}

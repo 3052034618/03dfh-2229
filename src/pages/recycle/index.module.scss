@@ -307,8 +307,30 @@
   line-height: 1.6;
 }
 
-.successBtn {
-  width: 100%;
+.successBtnRow {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.successBtnSecondary {
+  flex: 1;
+  height: $button-height-md;
+  background-color: $color-bg-gray;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-primary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.successBtnPrimary {
+  flex: 1;
   height: $button-height-md;
   background-color: $color-primary;
   border-radius: $radius-button;

@@ -3,7 +3,7 @@ import { View, Text, Input, Textarea } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
-import { mockBoxList } from '@/data/mock';
+import { useApp } from '@/store/app';
 import type { BoxItem } from '@/types';
 
 interface CheckItem {
@@ -13,6 +13,7 @@ interface CheckItem {
 }
 
 const ScanPage: React.FC = () => {
+  const { boxList, updateBoxStatus, addBox } = useApp();
   const [boxNoInput, setBoxNoInput] = useState('');
   const [currentBox, setCurrentBox] = useState<BoxItem | null>(null);
   const [checkItems, setCheckItems] = useState<CheckItem[]>([
@@ -44,13 +45,25 @@ const ScanPage: React.FC = () => {
   };
 
   const findBox = (boxNo: string) => {
-    const box = mockBoxList.find(b => b.boxNo === boxNo) || {
-      ...mockBoxList[0],
-      id: 'new_' + Date.now(),
+    const existingBox = boxList.find(b => b.boxNo === boxNo);
+    const box = existingBox || {
+      id: 'box_' + Date.now(),
       boxNo: boxNo,
       status: 'arrived_today' as const,
-      borrowDays: 0
+      borrowDays: 0,
+      depositStatus: 'paid' as const,
+      depositAmount: 300,
+      suggestedReturnTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16).replace('T', ' '),
+      temperature: 3.5,
+      borrowTime: new Date().toISOString(),
+      latestLocation: '',
+      specs: '60L标准箱'
     };
+
+    if (!existingBox) {
+      addBox(box);
+    }
+
     setCurrentBox(box);
     setCheckItems([
       { key: 'appearance', label: '箱体外观', value: '' },
@@ -96,6 +109,13 @@ const ScanPage: React.FC = () => {
 
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
+      if (currentBox) {
+        const newStatus: BoxItem['status'] = checkItems.some(item => item.value === 'abnormal')
+          ? 'abnormal'
+          : 'in_use';
+        updateBoxStatus(currentBox.id, newStatus);
+        console.log('[Scan] box status updated to:', newStatus);
+      }
       setShowSuccess(true);
     } catch (err) {
       console.error('[Scan] submit error:', err);

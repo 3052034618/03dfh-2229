@@ -5,24 +5,26 @@ import classnames from 'classnames';
 import styles from './index.module.scss';
 import StatusTag from '@/components/StatusTag';
 import { useUser } from '@/store/user';
-import { mockBookingList, mockTimeSlots, mockBoxList } from '@/data/mock';
-import { formatDateTime, getStatusText } from '@/utils';
+import { useApp } from '@/store/app';
+import { mockTimeSlots } from '@/data/mock';
+import { formatDateTime, getStatusText, generateId } from '@/utils';
 import type { BookingRecord } from '@/types';
 
 const RecyclePage: React.FC = () => {
   const { user } = useUser();
+  const { boxList, bookingList, addBooking, getBookingById } = useApp();
   const [selectedTime, setSelectedTime] = useState('');
   const [boxCount, setBoxCount] = useState(1);
   const [address, setAddress] = useState(user?.storeName ? `${user.storeName}（门店自取）` : '');
-  const [bookingList, setBookingList] = useState<BookingRecord[]>(mockBookingList);
   const [showSuccess, setShowSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [lastBookingId, setLastBookingId] = useState<string>('');
 
   useDidShow(() => {
-    console.log('[Recycle] page did show');
+    console.log('[Recycle] page did show, booking count:', bookingList.length);
   });
 
-  const returnableCount = mockBoxList.filter(
+  const returnableCount = boxList.filter(
     b => b.status === 'to_return' || b.status === 'in_use'
   ).length;
 
@@ -54,8 +56,9 @@ const RecyclePage: React.FC = () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
 
+      const newId = generateId();
       const newBooking: BookingRecord = {
-        id: 'bk_' + Date.now(),
+        id: newId,
         boxCount,
         timeSlot: selectedTime,
         address,
@@ -63,7 +66,8 @@ const RecyclePage: React.FC = () => {
         createTime: new Date().toISOString()
       };
 
-      setBookingList(prev => [newBooking, ...prev]);
+      addBooking(newBooking);
+      setLastBookingId(newId);
       setShowSuccess(true);
     } catch (err) {
       console.error('[Recycle] submit error:', err);
@@ -79,7 +83,19 @@ const RecyclePage: React.FC = () => {
     setBoxCount(1);
   };
 
+  const handleViewDetail = () => {
+    if (lastBookingId) {
+      setShowSuccess(false);
+      setSelectedTime('');
+      setBoxCount(1);
+      Taro.navigateTo({
+        url: `/pages/booking-detail/index?id=${lastBookingId}`
+      });
+    }
+  };
+
   const handleRecordClick = (record: BookingRecord) => {
+    console.log('[Recycle] click record:', record.id, record.timeSlot, record.boxCount);
     Taro.navigateTo({
       url: `/pages/booking-detail/index?id=${record.id}`
     });
@@ -213,8 +229,13 @@ const RecyclePage: React.FC = () => {
               承运员将尽快接单{'\n'}
               请保持电话畅通
             </Text>
-            <View className={styles.successBtn} onClick={handleSuccessClose}>
-              <Text>我知道了</Text>
+            <View className={styles.successBtnRow}>
+              <View className={styles.successBtnSecondary} onClick={handleSuccessClose}>
+                <Text>我知道了</Text>
+              </View>
+              <View className={styles.successBtnPrimary} onClick={handleViewDetail}>
+                <Text>查看详情</Text>
+              </View>
             </View>
           </View>
         </View>

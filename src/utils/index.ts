@@ -14,7 +14,17 @@ export const formatDateTime = (dateStr: string): string => {
   return `${month}月${day}日 ${hour}:${minute}`;
 };
 
-export const getStatusText = (status: string): string => {
+export const getStatusText = (status: string, context?: 'dispute' | 'booking' | 'box'): string => {
+  if (context === 'dispute') {
+    const disputeMap: Record<string, string> = {
+      'pending': '客服复核中',
+      'reviewing': '客服复核中',
+      'resolved': '已解决',
+      'rejected': '已驳回'
+    };
+    return disputeMap[status] || status;
+  }
+
   const statusMap: Record<string, string> = {
     'to_return': '待归还',
     'arrived_today': '今日到货',

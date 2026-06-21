@@ -1,10 +1,10 @@
 export default defineAppConfig({
   pages: [
+    'pages/login/index',
     'pages/home/index',
     'pages/scan/index',
     'pages/recycle/index',
     'pages/mine/index',
-    'pages/login/index',
     'pages/box-detail/index',
     'pages/dispute/index',
     'pages/booking-detail/index'

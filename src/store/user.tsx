@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import Taro from '@tarojs/taro';
 import type { UserInfo } from '@/types';
 import { mockUser } from '@/data/mock';
 
@@ -13,8 +14,8 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<UserInfo | null>(mockUser);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
+  const [user, setUser] = useState<UserInfo | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   const login = useCallback(async (type: 'phone' | 'store_code', account: string, code?: string): Promise<boolean> => {
     console.log('[Auth] login attempt', { type, account: account.substring(0, 3) + '****' });
@@ -31,6 +32,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     console.log('[Auth] logout');
     setUser(null);
     setIsLoggedIn(false);
+    Taro.reLaunch({ url: '/pages/login/index' });
   }, []);
 
   const updateUser = useCallback((data: Partial<UserInfo>) => {
